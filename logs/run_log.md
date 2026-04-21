@@ -15,4 +15,7 @@
 - [x] Đã đọc dữ liệu từ `data/input.txt`
 
 ## Điều em học được từ bài lab
-Viết 3-5 dòng ngắn gọn ở đây.
+- Hiểu cơ chế dịch vòng của Caesar và cách xử lý chữ hoa/chữ thường.
+- Nắm được mô hình zig-zag của Rail Fence và cách mã hoá/giải mã giữ khoảng trắng.
+- Học cách kiểm tra đầu vào và xử lý trường hợp không hợp lệ.
+- Thực hành đọc dữ liệu từ file và viết chương trình demo để kiểm chứng kết quả.
