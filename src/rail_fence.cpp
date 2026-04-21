@@ -23,7 +23,7 @@ string rail_fence_encrypt(const string &plaintext, int rails) {
     int direction = 1;
 
     for (char c : plaintext) {
-        // TODO(student): Q6 can keep spaces as normal characters.
+        // keep spaces as normal characters
         fence[rail] += c;
         rail += direction;
         if (rail == rails - 1 || rail == 0) direction = -direction;
@@ -35,8 +35,43 @@ string rail_fence_encrypt(const string &plaintext, int rails) {
 }
 
 string rail_fence_decrypt(const string &ciphertext, int rails) {
-    // TODO(student): Q5
-    return ciphertext;
+    if (rails <= 1 || ciphertext.empty()) return ciphertext;
+
+    int n = static_cast<int>(ciphertext.size());
+    // build pattern of rail indices for each character
+    vector<int> pattern(n);
+    int rail = 0;
+    int direction = 1;
+    for (int i = 0; i < n; ++i) {
+        pattern[i] = rail;
+        rail += direction;
+        if (rail == 0 || rail == rails - 1) direction = -direction;
+    }
+
+    // count how many characters belong to each rail
+    vector<int> counts(rails, 0);
+    for (int idx : pattern) counts[idx]++;
+
+    // slice the ciphertext into rows according to counts
+    vector<string> rows(rails);
+    int pos = 0;
+    for (int r = 0; r < rails; ++r) {
+        if (counts[r] > 0) {
+            rows[r] = ciphertext.substr(pos, counts[r]);
+            pos += counts[r];
+        }
+    }
+
+    // rebuild plaintext by walking the pattern and consuming from each row
+    vector<int> cur(rails, 0);
+    string plaintext;
+    plaintext.reserve(n);
+    for (int i = 0; i < n; ++i) {
+        int r = pattern[i];
+        plaintext += rows[r][cur[r]++];
+    }
+
+    return plaintext;
 }
 
 string read_message_from_file(const string &path) {
@@ -67,6 +102,15 @@ int main() {
 
     cout << "Enter rails: ";
     cin >> rails;
+    if (!is_valid_message(message)) {
+        cout << "Invalid input. Only letters and spaces are allowed.\n";
+        return 0;
+    }
+
+    if (rails <= 0) {
+        cout << "Invalid number of rails. Must be >= 1.\n";
+        return 0;
+    }
 
     if (!is_valid_message(message)) {
         cout << "Invalid input. Only letters and spaces are allowed.\n";
